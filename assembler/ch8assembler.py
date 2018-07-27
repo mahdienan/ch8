@@ -23,7 +23,7 @@ class CH8A:
 	input_file = ""
 	data = list()
 	print_bytes = False
-	verbose = False # TODO
+	verbose = False # not implemented
 	end_of_code = False
 	clean_format = False
 
@@ -61,63 +61,138 @@ class CH8A:
 			elif "JP L" in instruction:
 				code = "1" + instruction.split("L")[1]
 				chipcode += code.decode("hex")
+			elif "JP v" in instruction:
+				nnn = instruction.split("#")[1]
+				code = "B" + nnn
+				chipcode += code.decode("hex")
 			elif "CALL" in instruction:
 				code = "2" + instruction.split("#")[1]
 				chipcode += code.decode("hex")
-			elif "SE v" in instruction:
-				if "#" in instruction:
-					kk = instruction.split("#")[1]
-					x = instruction.split("v")[1].split(",")[0]
-					code = "3" + x + kk
-					chipcode += code.decode("hex")
-				else:
-					_,x,y = instruction.split("v")
-					x = x[0]
-					code = "5" + x + y + "0"
-					chipcode += code.decode("hex")
-			elif "SNE v" in instruction:
-				if "#" in instruction:
-					kk = instruction.split("#")[1]
-					x = instruction.split("v")[1].split(",")[0]
-					code = "4" + x + kk
-					chipcode += code.decode("hex")
-				else:
-					_,x,y = instruction.split("v")
-					x = x[0]
-					code = "9" + x + y + "0"
-					chipcode += code.decode("hex")
-			elif "LD v" in instruction:
-				if "#" in instruction:
-					kk = instruction.split("#")[1]
-					x = instruction.split("v")[1].split(",")[0]
-					code = "6" + x + kk
-					chipcode += code.decode("hex")
-				#TODO else
-			elif "ADD v" in instruction:
-				if "#" in instruction:
-					kk = instruction.split("#")[1]
-					x = instruction.split("v")[1].split(",")[0]
-					code = "7" + x + kk
-					chipcode += code.decode("hex")
-				else:
-					_,x,y = instruction.split("v")
-					x = x[0]
-					code = "8" + x + y + "4"
-					chipcode += code.decode("hex")
-			#TODO rest
+			elif "SE v" in instruction and "#" in instruction:
+				kk = instruction.split("#")[1]
+				x = instruction.split("v")[1].split(",")[0]
+				code = "3" + x + kk
+				chipcode += code.decode("hex")
+			elif "SE v" in instruction and instruction.count("v") == 2:
+				_,x,y = instruction.split("v")
+				x = x[0]
+				y = y[0]
+				code = "5" + x + y + "0"
+				chipcode += code.decode("hex")
+			elif "SNE v" in instruction and "#" in instruction:
+				kk = instruction.split("#")[1]
+				x = instruction.split("v")[1].split(",")[0]
+				code = "4" + x + kk
+				chipcode += code.decode("hex")
+			elif "SNE v" in instruction and instruction.count("v") == 2:
+				_,x,y = instruction.split("v")
+				x = x[0]
+				code = "9" + x + y + "0"
+				chipcode += code.decode("hex")
+			elif "LD v" in instruction and "#" in instruction:
+				kk = instruction.split("#")[1]
+				x = instruction.split("v")[1].split(",")[0]
+				code = "6" + x + kk
+				chipcode += code.decode("hex")
+			elif "LD" in instruction and instruction.count("v") == 2:
+				_, x,y = instruction.split("v")
+				x = x[0]
+				code = "8" + x + y + "0"
+				chipcode += code.decode("hex")
+			elif "LD [I]" in instruction:
+				x = instruction.split("v")[1].split(",")[0]
+				code = "F" + x + "55"
+				chipcode += code.decode("hex")
+			elif "LD v" in instruction and "[I]" in instruction:
+				x = instruction.split("v")[1].split(",")[0]
+				code = "F" + x + "65"
+				chipcode += code.decode("hex")
+			elif "LD F" in instruction:
+				x = instruction.split("v")[1].split(",")[0]
+				code = "F" + x + "29"
+				chipcode += code.decode("hex")
+			elif "LD I" in instruction:
+				code = "A" + instruction.split("#")[1]
+				chipcode += code.decode("hex")
+			elif "LD DT" in instruction:
+				x = instruction.split("v")[1].split(",")[0]
+				code = "F" + x + "15"
+				chipcode += code.decode("hex")
+			elif "LD ST" in instruction:
+				x = instruction.split("v")[1].split(",")[0]
+				code = "F" + x + "18"
+				chipcode += code.decode("hex")
+			elif "LD v" in instruction and "DT" in instruction:
+				x = instruction.split("v")[1].split(",")[0]
+				code = "F" + x + "07"
+				chipcode += code.decode("hex")
+			elif "ADD v" in instruction and "#" in instruction:
+				kk = instruction.split("#")[1]
+				x = instruction.split("v")[1].split(",")[0]
+				code = "7" + x + kk
+				chipcode += code.decode("hex")
+			elif "ADD v" in instruction and instruction.count("v") == 2:
+				_, x,y = instruction.split("v")
+				x = x[0]
+				code = "8" + x + y + "4"
+				chipcode += code.decode("hex")
+			elif "ADD" in instruction and "I" in instruction:
+				x = instruction.split("v")[1].split(",")[0]
+				code = "F" + x + "1E"
+				chipcode += code.decode("hex")
+			elif "SUB" in instruction and instruction.count("v") == 2:
+				_, x,y = instruction.split("v")
+				x = x[0]
+				code = "8" + x + y + "5"
+				chipcode += code.decode("hex")
+			elif "SHL" in instruction and instruction.count("v") == 2:
+				_, x,y = instruction.split("v")
+				x = x[0]
+				code = "8" + x + y + "E"
+				chipcode += code.decode("hex")
+			elif "SHR v" in instruction:
+				x = instruction.split("v")[1].split(",")[0]
+				y = instruction.split("#")[1][:1]
+				code = "8" + x + y + "6"
+				chipcode += code.decode("hex")
+			elif "AND v" in instruction and instruction.count("v") == 2:
+				_, x,y = instruction.split("v")
+				x = x[0]
+				code = "8" + x + y + "2"
+				chipcode += code.decode("hex")
+			elif "OR" in instruction and not "XOR" in instruction \
+				 and instruction.count("v") == 2:
+				_, x,y = instruction.split("v")
+				x = x[0]
+				y = y[0]
+				code = "8" + x + y + "1"
+				chipcode += code.decode("hex")
+			elif "XOR"in instruction and instruction.count("v") == 2:
+				_, x,y = instruction.split("v")
+				x = x[0]
+				y = y[0]
+				code = "8" + x + y + "3"
+				chipcode += code.decode("hex")
+			elif "SKP v" in instruction:
+				x = instruction.split("v")[1].split(",")[0]
+				code = "E" + x + "9E"
+				chipcode += code.decode("hex")
+			elif "SKNP v" in instruction:
+				x = instruction.split("v")[1].split(",")[0]
+				code = "E" + x + "A1"
+				chipcode += code.decode("hex")
+			elif "RND" in instruction:
+				kk = instruction.split("#")[1]
+				x = instruction.split("v")[1].split(",")[0]
+				code = "C" + x + kk
+				chipcode += code.decode("hex")
 			elif "DRW" in instruction:
-				#Dxyn
 				x,y,n = instruction.split(",")
 				x = x.split("v")[1]
 				y = y.split("v")[1]
 				n = n.split("#")[1]
 				code = "D" + x + y + n
 				chipcode += code.decode("hex")
-			#TODO rest
-			elif "LD I" in instruction:
-				code = "A" + instruction.split("#")[1]
-				chipcode += code.decode("hex")
-			#TODO rest
 			elif "db" in instruction:
 				high,low = instruction.split(",")
 				high = high.split("#")[1]
