@@ -23,7 +23,6 @@ class CH8A:
 	input_file = ""
 	data = list()
 	print_bytes = False
-	verbose = False # not implemented
 	end_of_code = False
 	clean_format = False
 
@@ -118,6 +117,10 @@ class CH8A:
 				x = instruction.split("v")[1].split(",")[0]
 				code = "F" + x + "15"
 				chipcode += code.decode("hex")
+			elif "LD v" in instruction and "K" in instruction:
+				x = instruction.split("v")[1].split(",")[0]
+				code = "F" + x + "0A"
+				chipcode += code.decode("hex")
 			elif "LD ST" in instruction:
 				x = instruction.split("v")[1].split(",")[0]
 				code = "F" + x + "18"
@@ -125,6 +128,10 @@ class CH8A:
 			elif "LD v" in instruction and "DT" in instruction:
 				x = instruction.split("v")[1].split(",")[0]
 				code = "F" + x + "07"
+				chipcode += code.decode("hex")
+			elif "LD B" in instruction:
+				x = instruction.split("v")[1].split(",")[0]
+				code = "F" + x + "33"
 				chipcode += code.decode("hex")
 			elif "ADD v" in instruction and "#" in instruction:
 				kk = instruction.split("#")[1]

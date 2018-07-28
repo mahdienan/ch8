@@ -148,6 +148,7 @@ class CH8DA:
 	def disassemble_0x00EE(self, hexcode): # untested
 		print "RET"
 
+
 	# JP addr (1nnn)
 	def disassemble_0x1XXX(self, hexcode, location): # ok
 		destination = "{:03X}".format(hexcode & 0x0FFF)
@@ -172,7 +173,7 @@ class CH8DA:
 	# SE Vx, Vy (5xy0)
 	def disassemble_0x5XXX(self, hexcode): # probably wrong!
 		print "SE " + "v" + "{:01X}".format(hexcode & 0x0F00)[:1] + ", "\
-					+ "v" + "{:01X}".format(hexcode & 0x00F0)[:2]
+					+ "v" + "{:01X}".format(hexcode & 0x00F0)[:2][:1]
 
 	# LD Vx, byte (6xkk)
 	def disassemble_0x6XXX(self, hexcode): # ok
